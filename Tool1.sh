@@ -234,13 +234,11 @@ menu_setup_env() {
 search_offset_dump() {
     clear
     echo -e "${BLUE}==================================================${RESET}"
-    echo -e "${PURPLE}      🔍 IL2CPP DUMP.CS OFFSET SEARCHER          ${RESET}"
+    echo -e "${PURPLE}      🔍 IL2CPP DUMP.CS OFFSET SEARCHER (v2.1)   ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
     
-    # 📂 กำหนดพาธที่เก็บไฟล์ Dump.cs บนมือถือ
-    local dump_file="/storage/emulated/0/Dump.cs"
+    local dump_file="/storage/emulated/0/Download/Dump.cs"
     
-    # ตรวจสอบว่ามีไฟล์ Dump.cs อยู่จริงไหม
     if [ ! -f "$dump_file" ]; then
         echo -e "${RED}❌ ไม่พบไฟล์ Dump.cs ในความจำเครื่อง!${RESET}"
         echo -e "${YELLOW}กรุณานำไฟล์ Dump.cs ไปวางไว้ที่: /storage/emulated/0/Dump.cs${RESET}"
@@ -255,39 +253,45 @@ search_offset_dump() {
         sleep 1 && return
     fi
 
-    echo -e "${YELLOW}\n⏳ กำลังค้นหาและประมวลผลข้อมูล... อาจใช้เวลาสักครู่${RESET}"
+    echo -e "${YELLOW}\n⏳ กำลังค้นหาข้อมูลแบบยืดหยุ่น... อาจใช้เวลาสักครู่${RESET}"
     echo -e "${BLUE}--------------------------------------------------${RESET}"
 
-    # 🛠️ ใช้พลังของ awk ในการจำค่า Namespace, Class และดึงข้อมูลฟังก์ชัน/Offset ออกมาแบบอัจฉรียะ
+    # 🛠️ ปรับปรุงสคริปต์ค้นหา: ค้นหาได้ทั้งตัวเล็กตัวใหญ่ และรองรับทุก Format ของ Dump.cs
     awk -v search="$search_term" '
-        # 1. ถ้าเจอ Namespace ให้จำค่าไว้
+        BEGIN {
+            # เปิดโหมดค้นหาแบบไม่สนตัวพิมพ์เล็ก-ใหญ่ (สำหรับ GNU awk ใน Termux)
+            IGNORECASE = 1; 
+        }
+        # 1. จำค่า Namespace ล่าสุดที่เจอ
         /namespace / { current_ns = $0; gsub(/^[ \t]+/, "", current_ns); }
         
-        # 2. ถ้าเจอ Class ให้จำค่าไว้
+        # 2. จำค่า Class/Struct ล่าสุดที่เจอ
         /class / || /struct / { current_class = $0; gsub(/^[ \t]+/, "", current_class); }
         
-        # 3. ถ้าบรรทัดนั้นมีคำที่ค้นหา และมีคำว่า // RVA: หรือ Offset (รูปแบบของ IL2CPP Dump)
-        $0 ~ search && ( / \/\/ RVA:/ || / \/\/ Offset:/ ) {
-            # เคลียร์ช่องว่างข้างหน้าให้สวยงาม
-            clean_line = $0; gsub(/^[ \t]+/, "", clean_line);
+        # 3. ตรวจสอบบรรทัดที่มีคีย์เวิร์ดค้นหา 
+        # และกรองให้มั่นใจว่าเป็นบรรทัดตัวแปร/ฟังก์ชันที่มีการระบุ Offset หรือ RVA
+        tolower($0) ~ tolower(search) && ($0 ~ /\/\/.*(RVA|Offset|FieldOffset|VA)/ || $0 ~ /0x[0-9a-fA-F]/) {
+            clean_line = $0; 
+            gsub(/^[ \t]+/, "", clean_line); # ตัดช่องว่างด้านหน้าออกเพื่อความสวยงาม
             
-            # พิมพ์สรุปโครงสร้างออกมา
             print "\033[1;36m[Namespace]:\033[0m " (current_ns ? current_ns : "Global / None");
-            print "\033[1;33m[Class/Struct]:\033[0m " current_class;
-            print "\033[1;32m[Offset Line]:\033[0m " clean_line;
+            print "\033[1;33m[Class/Struct]:\033[0m " (current_class ? current_class : "Unknown Class");
+            print "\033[1;32m[Result Line]:\033[0m " clean_line;
             print "\033[1;34m--------------------------------------------------\033[0m";
             found = 1;
         }
         END {
             if (!found) {
-                print "\033[1;31m❌ ไม่พบข้อมูล Offset ที่ตรงกับคำว่า \"" search "\" ในไฟล์นี้\033[0m";
+                print "\033[1;31m❌ ไม่พบข้อมูลที่ตรงกับคำว่า \"" search "\" ในไฟล์นี้\033[0m";
+                print "\033[1;33m💡 ทริค: ลองค้นหาด้วยชื่อ Class เต็มๆ หรือค้นหาคำย่อดูครับ\033[0m";
             }
-        }
+        fi
     ' "$dump_file"
 
     echo -e "${GREEN}🔍 ค้นหาเสร็จสิ้น!${RESET}"
     read -p "กด Enter เพื่อกลับหน้าเมนูหลัก..."
 }
+
 
 # 🔄 ลูปการทำงานหลัก (Main Life-Cycle Loop)
 init_folders
