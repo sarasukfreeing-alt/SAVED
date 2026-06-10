@@ -1,6 +1,4 @@
-#!/bin/bash
-
-# ==================================================
+ตรวจสอบว่าคลังของคุณใช้ชื่อหลักว่า============================================
 # SCRIPT BY SRS TEAM MODS
 # Telegram CH: t.me/SARASUKCH
 # TG: @ExtraTypeXcpp
@@ -191,29 +189,27 @@ menu_clean_garbage() {
 # 🔄 แก้ไขฟังก์ชันเมนู 5 ในไฟล์ tool.sh ของคุณ
 menu_update_git() {
     clear
-    echo -e "${YELLOW}=== [5] ระบบตรวจสอบการอัปเดตจาก GitHub ===${RESET}"
+    echo -e "${YELLOW}=== [5] ระบบตรวจสอบและบังคับอัปเดตจาก GitHub ===${RESET}"
+    echo -e "${CYAN}กำลังทำการอัปเดตสคริปต์จากคลัง sarsukfreeing-alt/SAVED...${RESET}"
     
-    if [ -d ".git" ]; then
-        echo -e "${CYAN}กำลังเคลียร์ไฟล์ที่แก้ไขในเครื่องชั่วคราวเพื่อป้องกันการติดขัด...${RESET}"
-        # 🛠️ เคลียร์สถานะในเครื่องที่ขัดขวางการดึงไฟล์ใหม่
-        git stash &> /dev/null 
+    # 📂 ตั้งชื่อโฟลเดอร์ปลายทางชั่วคราวเพื่อโหลดไฟล์ใหม่
+    local repo_url="https://github.com/sarasukfreeing-alt/SAVED.git"
+    local tmp_dir="../SAVED_TMP"
+    
+    # ดาวน์โหลดเวอร์ชันล่าสุดมาไว้ที่โฟลเดอร์ชั่วคราว
+    if git clone --depth 1 "$repo_url" "$tmp_dir" &> /dev/null; then
+        # ลบไฟล์งานเก่าในโฟลเดอร์ปัจจุบันออก (ยกเว้นโฟลเดอร์ข้อมูลที่ผู้ใช้สร้างไว้)
+        find . -maxdepth 1 ! -name '.' ! -name '..' ! -name '.git' -exec rm -rf {} +
         
-        echo -e "${CYAN}กำลังเชื่อมต่อไปยัง Repository เพื่อดึงเวอร์ชันล่าสุด...${RESET}"
+        # ย้ายไฟล์ใหม่ทั้งหมดจากโฟลเดอร์ชั่วคราวเข้ามาแทนที่
+        cp -r "$tmp_dir"/* . &> /dev/null
+        rm -rf "$tmp_dir"
         
-        # 🛠️ ตรวจสอบว่าคลังของคุณใช้ชื่อหลักว่า main หรือ master แล้วดึงให้ถูกตัว
-        if git show-ref --verify --quiet refs/heads/main; then
-            git pull origin main
-        else
-            git pull origin master
-        fi
-        
-        # เปิดสิทธิ์การรันใหม่อีกครั้งเผื่อไฟล์โดนเขียนทับ
         chmod +x tool.sh
-        echo -e "${GREEN}✅ ซิงค์ข้อมูลและอัปเดตระบบเป็นเวอร์ชันล่าสุดเรียบร้อยแล้ว!${RESET}"
-        echo -e "${YELLOW}💡 แนะนำ: กรุณาปิด Tool แล้วเปิดใหม่ เพื่อให้โค้ดใหม่ทำงานครับ${RESET}"
+        echo -e "${GREEN}✅ บังคับอัปเดตระบบเป็นเวอร์ชันล่าสุดจาก GitHub สำเร็จ!${RESET}"
+        echo -e "${YELLOW}💡 แนะนำ: กรุณาปิด Tool แล้วเปิดใหม่เพื่อใช้งานเวอร์ชันใหม่ครับ${RESET}"
     else
-        echo -e "${RED}❌ สคริปต์นี้ไม่ได้รันอยู่ในโฟลเดอร์ของ Git Clone${RESET}"
-        echo -e "${YELLOW}วิธีแก้: ให้ใช้คำสั่ง git clone ดึงโปรเจกต์มาใหม่อีกครั้งครับ${RESET}"
+        echo -e "${RED}❌ ไม่สามารถเชื่อมต่อกับ GitHub ได้! (อินเทอร์เน็ตมีปัญหา หรือคลังถูกปิดเป็น Private)${RESET}"
     fi
     read -p "กด Enter เพื่อกลับหน้าเมนูหลัก..."
 }
