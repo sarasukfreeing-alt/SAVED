@@ -50,7 +50,7 @@ show_menu() {
     echo "  ___) |  _ < ___) |  | | | |___ / ___ \| |  | |"
     echo " |____/|_| \_\____/   |_| |_____/_/   \_\_|  |_| ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
-    echo -e "${PURPLE}           SRS TEAM MODS - MULTI TOOL v2.1        ${RESET}"
+    echo -e "${PURPLE}           SRS TEAM MODS - MULTI TOOL v2.2        ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
     echo -e " ${YELLOW}[1]${RESET} ย้อมสีรูปภาพ PNG ให้เป็นสีขาวล้วน (Silhouette)"
     echo -e " ${YELLOW}[2]${RESET} แปลงรูปภาพ PNG เป็นไฟล์โค้ด (.h) ฐานสิบหก"
@@ -234,10 +234,10 @@ menu_setup_env() {
 search_offset_dump() {
     clear
     echo -e "${BLUE}==================================================${RESET}"
-    echo -e "${PURPLE}      🔍 IL2CPP DUMP.CS OFFSET SEARCHER (v2.1)   ${RESET}"
+    echo -e "${PURPLE}      🔍 IL2CPP DUMP.CS OFFSET SEARCHER (v2.2)   ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
     
-    local dump_file="/storage/emulated/0/Download/Dump.cs"
+    local dump_file="/storage/emulated/0/Dump.cs"
     
     if [ ! -f "$dump_file" ]; then
         echo -e "${RED}❌ ไม่พบไฟล์ Dump.cs ในความจำเครื่อง!${RESET}"
