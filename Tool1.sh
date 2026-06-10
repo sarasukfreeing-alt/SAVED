@@ -50,7 +50,7 @@ show_menu() {
     echo "  ___) |  _ < ___) |  | | | |___ / ___ \| |  | |"
     echo " |____/|_| \_\____/   |_| |_____/_/   \_\_|  |_| ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
-    echo -e "${PURPLE}         SRS TEAM MODS - MULTI TOOL v7.8.8        ${RESET}"
+    echo -e "${PURPLE}         SRS TEAM MODS - MULTI TOOL v1.8.8        ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
     echo -e " ${YELLOW}[1]${RESET} ย้อมสีรูปภาพ PNG ให้เป็นสีขาวล้วน (Silhouette)"
     echo -e " ${YELLOW}[2]${RESET} แปลงรูปภาพ PNG เป็นไฟล์โค้ด (.h) ฐานสิบหก"
@@ -94,7 +94,7 @@ menu_convert_white() {
     read -p "กด Enter เพื่อกลับหน้าเมนูหลัก..."
 }
 
-# 💾 [เมนู 2] แปลงรูปภาพ PNG เป็น .h (เวอร์ชันแก้ไขบั๊กปีกกาซ้อน)
+# 💾 [เมนู 2] แปลงรูปภาพ PNG เป็น .h (ตัดตัวแปรความยาวไฟล์ออก)
 menu_convert_image_h() {
     clear
     echo -e "${BLUE}=== [2] แปลงรูปภาพ PNG เป็นไฟล์โค้ด .h ===${RESET}"
@@ -122,8 +122,8 @@ menu_convert_image_h() {
             variable_name="${file_name}_data"
             output_file="$H_OUTPUT${file_name}.h"
             
-            # 🛠️ จุดแก้ไขสำคัญ: ใช้ xxd และใช้ sed ในการจัดโครงสร้างชื่อตัวแปรให้ตรงกับความต้องการของ C++
-            xxd -i "$image_file" | sed "s/unsigned char.*/unsigned char $variable_name[] = {/; s/unsigned int.*/unsigned int ${variable_name}_len = /" > "$output_file"
+            # 🛠️ ใช้ sed กรองเอาเฉพาะท่อนอาร์เรย์ตัวแปร และตัดบรรทัดความยาวไฟล์ (unsigned int) ทิ้งไปเลย
+            xxd -i "$image_file" | sed "s/unsigned char.*/unsigned char $variable_name[] = {/" | sed '/unsigned int/d' > "$output_file"
             
             echo -e "${GREEN}Done：$file_name -> ${file_name}.h ✅${RESET}"
 
