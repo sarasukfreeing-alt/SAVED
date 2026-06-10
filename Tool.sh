@@ -188,20 +188,36 @@ menu_clean_garbage() {
     read -p "กด Enter เพื่อกลับหน้าเมนูหลัก..."
 }
 
-# 🔄 [เมนู 5] ระบบอัปเดต Pull จาก GitHub ตัวเองอัตโนมัติ
+# 🔄 แก้ไขฟังก์ชันเมนู 5 ในไฟล์ tool.sh ของคุณ
 menu_update_git() {
     clear
     echo -e "${YELLOW}=== [5] ระบบตรวจสอบการอัปเดตจาก GitHub ===${RESET}"
+    
     if [ -d ".git" ]; then
-        echo -e "${CYAN}กำลังเชื่อมต่อไปยัง Repository เพื่อตรวจสอบเวอร์ชันใหม่...${RESET}"
-        git pull origin main
+        echo -e "${CYAN}กำลังเคลียร์ไฟล์ที่แก้ไขในเครื่องชั่วคราวเพื่อป้องกันการติดขัด...${RESET}"
+        # 🛠️ เคลียร์สถานะในเครื่องที่ขัดขวางการดึงไฟล์ใหม่
+        git stash &> /dev/null 
+        
+        echo -e "${CYAN}กำลังเชื่อมต่อไปยัง Repository เพื่อดึงเวอร์ชันล่าสุด...${RESET}"
+        
+        # 🛠️ ตรวจสอบว่าคลังของคุณใช้ชื่อหลักว่า main หรือ master แล้วดึงให้ถูกตัว
+        if git show-ref --verify --quiet refs/heads/main; then
+            git pull origin main
+        else
+            git pull origin master
+        fi
+        
+        # เปิดสิทธิ์การรันใหม่อีกครั้งเผื่อไฟล์โดนเขียนทับ
         chmod +x tool.sh
-        echo -e "${GREEN}✅ ซิงค์ข้อมูลกับ GitHub เป็นเวอร์ชันล่าสุดเรียบร้อยแล้ว!${RESET}"
+        echo -e "${GREEN}✅ ซิงค์ข้อมูลและอัปเดตระบบเป็นเวอร์ชันล่าสุดเรียบร้อยแล้ว!${RESET}"
+        echo -e "${YELLOW}💡 แนะนำ: กรุณาปิด Tool แล้วเปิดใหม่ เพื่อให้โค้ดใหม่ทำงานครับ${RESET}"
     else
-        echo -e "${RED}❌ สคริปต์นี้ไม่ได้เปิดผ่านคำสั่ง 'git clone' ไม่สามารถดึงอัปเดตแบบอัตโนมัติได้${RESET}"
+        echo -e "${RED}❌ สคริปต์นี้ไม่ได้รันอยู่ในโฟลเดอร์ของ Git Clone${RESET}"
+        echo -e "${YELLOW}วิธีแก้: ให้ใช้คำสั่ง git clone ดึงโปรเจกต์มาใหม่อีกครั้งครับ${RESET}"
     fi
     read -p "กด Enter เพื่อกลับหน้าเมนูหลัก..."
 }
+
 
 # 📦 [เมนู 6] ติดตั้งสภาพแวดล้อม Termux สำหรับผู้ใช้ใหม่
 menu_setup_env() {
