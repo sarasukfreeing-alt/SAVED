@@ -50,7 +50,7 @@ show_menu() {
     echo "  ___) |  _ < ___) |  | | | |___ / ___ \| |  | |"
     echo " |____/|_| \_\____/   |_| |_____/_/   \_\_|  |_| ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
-    echo -e "${PURPLE}         SRS TEAM MODS - MULTI TOOL v7.8.7        ${RESET}"
+    echo -e "${PURPLE}         SRS TEAM MODS - MULTI TOOL v7.8.8        ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
     echo -e " ${YELLOW}[1]${RESET} ย้อมสีรูปภาพ PNG ให้เป็นสีขาวล้วน (Silhouette)"
     echo -e " ${YELLOW}[2]${RESET} แปลงรูปภาพ PNG เป็นไฟล์โค้ด (.h) ฐานสิบหก"
@@ -94,7 +94,7 @@ menu_convert_white() {
     read -p "กด Enter เพื่อกลับหน้าเมนูหลัก..."
 }
 
-# 💾 [เมนู 2] แปลงรูปภาพ PNG เป็น .h (xxd)
+# 💾 [เมนู 2] แปลงรูปภาพ PNG เป็น .h (เวอร์ชันแก้ไขบั๊กปีกกาซ้อน)
 menu_convert_image_h() {
     clear
     echo -e "${BLUE}=== [2] แปลงรูปภาพ PNG เป็นไฟล์โค้ด .h ===${RESET}"
@@ -118,17 +118,13 @@ menu_convert_image_h() {
     local count=0
     for image_file in "$SOURCE_DIR"*.png; do
         if [ -f "$image_file" ]; then
-            binary_data=$(xxd -i -c 16 "$image_file")
             file_name=$(basename "$image_file" .png)
             variable_name="${file_name}_data"
             output_file="$H_OUTPUT${file_name}.h"
             
-            header_content="unsigned char $variable_name[] = {
-$binary_data
-};
-
-"
-            echo "$header_content" > "$output_file"
+            # 🛠️ จุดแก้ไขสำคัญ: ใช้ xxd และใช้ sed ในการจัดโครงสร้างชื่อตัวแปรให้ตรงกับความต้องการของ C++
+            xxd -i "$image_file" | sed "s/unsigned char.*/unsigned char $variable_name[] = {/; s/unsigned int.*/unsigned int ${variable_name}_len = /" > "$output_file"
+            
             echo -e "${GREEN}Done：$file_name -> ${file_name}.h ✅${RESET}"
 
             # บันทึกลงไฟล์อำนวยความสะดวกฝั่ง C++
@@ -140,13 +136,14 @@ $binary_data
     done
 
     if [ $count -eq 0 ]; then
-        echo -e "${RED}❌ ไม่พบไฟล์รูปภาพในโฟลเดอร์ปลายทางที่เลือก!${RESET}"
+        echo -e "${RED}❌ 不พบไฟล์รูปภาพในโฟลเดอร์ปลายทางที่เลือก!${RESET}"
     else
         show_progress
         echo -e "${GREEN}\n🎉 เข้ารหัสไฟล์สำเร็จจำนวน $count ไฟล์! สรุปโค้ดอยู่ที่: $H_OUTPUT${RESET}"
     fi
     read -p "กด Enter เพื่อกลับหน้าเมนูหลัก..."
 }
+
 
 # 🔤 [เมนู 3] แปลงฟอนต์ .ttf เป็น .h
 menu_convert_font_h() {
