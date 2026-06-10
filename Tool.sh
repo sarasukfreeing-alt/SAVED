@@ -3,7 +3,7 @@
 # ==================================================
 # SCRIPT BY SRS TEAM MODS
 # Telegram CH: t.me/SARASUKCH
-# TG: @SARASUK17
+# TG: @ExtraTypeXcpp
 # ==================================================
 
 # 🎨 การตั้งค่าสีสันหน้าเมนู (ANSI Colors)
@@ -52,7 +52,7 @@ show_menu() {
     echo "  ___) |  _ < ___) |  | | | |___ / ___ \| |  | |"
     echo " |____/|_| \_\____/   |_| |_____/_/   \_\_|  |_| ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
-    echo -e "${PURPLE}           SRS TEAM MODS - MULTI TOOL v2.0        ${RESET}"
+    echo -e "${PURPLE}           SRS TEAM MODS - MULTI TOOL v2.1        ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
     echo -e " ${YELLOW}[1]${RESET} ย้อมสีรูปภาพ PNG ให้เป็นสีขาวล้วน (Silhouette)"
     echo -e " ${YELLOW}[2]${RESET} แปลงรูปภาพ PNG เป็นไฟล์โค้ด (.h) ฐานสิบหก"
@@ -63,7 +63,7 @@ show_menu() {
     echo -e " ${YELLOW}[7]${RESET} ค้นหา Offset จากไฟล์ Dump.cs (Namespace + Class)"
     echo -e " ${RED}[0]${RESET} ออกจากโปรแกรม"
     echo -e "${BLUE}==================================================${RESET}"
-    echo -n "กรุณากรอกตัวเลขเลือกเมนู [0-6]: "
+    echo -n "กรุณากรอกตัวเลขเลือกเมนู [0-7]: "
 }
 
 # 🛠️ [เมนู 1] ย้อมรูปขาวล้วน (แต่หลังโปร่งใส)
@@ -295,7 +295,7 @@ while true; do
             exit 0 
             ;;
         *) 
-            echo -e "${RED}\n❌ ป้อนตัวเลขไม่ถูกต้อง! กรุณาเลือกเมนูที่มีอยู่ (0-6)${RESET}"
+            echo -e "${RED}\n❌ ป้อนตัวเลขไม่ถูกต้อง! กรุณาเลือกเมนูที่มีอยู่ (0-7)${RESET}"
             sleep 1.2
             ;;
     esac
