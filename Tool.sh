@@ -60,6 +60,7 @@ show_menu() {
     echo -e " ${RED}[4]${RESET} ล้างไฟล์ขยะชั่วคราวในโฟลเดอร์ทั้งหมด"
     echo -e " ${CYAN}[5]${RESET} ตรวจสอบและอัปเดตเครื่องมือผ่าน GitHub"
     echo -e " ${GREEN}[6]${RESET} ตรวจสอบ/ติดตั้งเครื่องมือที่จำเป็น (Setup Env)"
+    echo -e " ${YELLOW}[7]${RESET} ค้นหา Offset จากไฟล์ Dump.cs (Namespace + Class)"
     echo -e " ${RED}[0]${RESET} ออกจากโปรแกรม"
     echo -e "${BLUE}==================================================${RESET}"
     echo -n "กรุณากรอกตัวเลขเลือกเมนู [0-6]: "
@@ -217,6 +218,65 @@ menu_setup_env() {
     read -p "กด Enter เพื่อกลับหน้าเมนูหลัก..."
 }
 
+# 7 
+search_offset_dump() {
+    clear
+    echo -e "${BLUE}==================================================${RESET}"
+    echo -e "${PURPLE}      🔍 IL2CPP DUMP.CS OFFSET SEARCHER          ${RESET}"
+    echo -e "${BLUE}==================================================${RESET}"
+    
+    # 📂 กำหนดพาธที่เก็บไฟล์ Dump.cs บนมือถือ
+    local dump_file="/storage/emulated/0/Dump.cs"
+    
+    # ตรวจสอบว่ามีไฟล์ Dump.cs อยู่จริงไหม
+    if [ ! -f "$dump_file" ]; then
+        echo -e "${RED}❌ ไม่พบไฟล์ Dump.cs ในความจำเครื่อง!${RESET}"
+        echo -e "${YELLOW}กรุณานำไฟล์ Dump.cs ไปวางไว้ที่: /storage/emulated/0/Dump.cs${RESET}"
+        read -p "กด Enter เพื่อกลับ..." && return
+    fi
+
+    echo -n "กรอกคำที่ต้องการค้นหา Offset (เช่น Player, Health, Weapon): "
+    read search_term
+    
+    if [ -z "$search_term" ]; then
+        echo -e "${RED}❌ ไม่สามารถกรอกค่าว่างได้!${RESET}"
+        sleep 1 && return
+    fi
+
+    echo -e "${YELLOW}\n⏳ กำลังค้นหาและประมวลผลข้อมูล... อาจใช้เวลาสักครู่${RESET}"
+    echo -e "${BLUE}--------------------------------------------------${RESET}"
+
+    # 🛠️ ใช้พลังของ awk ในการจำค่า Namespace, Class และดึงข้อมูลฟังก์ชัน/Offset ออกมาแบบอัจฉรียะ
+    awk -v search="$search_term" '
+        # 1. ถ้าเจอ Namespace ให้จำค่าไว้
+        /namespace / { current_ns = $0; gsub(/^[ \t]+/, "", current_ns); }
+        
+        # 2. ถ้าเจอ Class ให้จำค่าไว้
+        /class / || /struct / { current_class = $0; gsub(/^[ \t]+/, "", current_class); }
+        
+        # 3. ถ้าบรรทัดนั้นมีคำที่ค้นหา และมีคำว่า // RVA: หรือ Offset (รูปแบบของ IL2CPP Dump)
+        $0 ~ search && ( / \/\/ RVA:/ || / \/\/ Offset:/ ) {
+            # เคลียร์ช่องว่างข้างหน้าให้สวยงาม
+            clean_line = $0; gsub(/^[ \t]+/, "", clean_line);
+            
+            # พิมพ์สรุปโครงสร้างออกมา
+            print "\033[1;36m[Namespace]:\033[0m " (current_ns ? current_ns : "Global / None");
+            print "\033[1;33m[Class/Struct]:\033[0m " current_class;
+            print "\033[1;32m[Offset Line]:\033[0m " clean_line;
+            print "\033[1;34m--------------------------------------------------\033[0m";
+            found = 1;
+        }
+        END {
+            if (!found) {
+                print "\033[1;31m❌ ไม่พบข้อมูล Offset ที่ตรงกับคำว่า \"" search "\" ในไฟล์นี้\033[0m";
+            }
+        }
+    ' "$dump_file"
+
+    echo -e "${GREEN}🔍 ค้นหาเสร็จสิ้น!${RESET}"
+    read -p "กด Enter เพื่อกลับหน้าเมนูหลัก..."
+}
+
 # 🔄 ลูปการทำงานหลัก (Main Life-Cycle Loop)
 init_folders
 while true; do
@@ -229,6 +289,7 @@ while true; do
         4) menu_clean_garbage ;;
         5) menu_update_git ;;
         6) menu_setup_env ;;
+        7) search_offset_dump ;;
         0) 
             echo -e "${GREEN}\nขอบคุณที่ใช้บริการเครื่องมือจาก SRS TEAM MODS! แล้วเจอกันใหม่ครับ 👋${RESET}"
             exit 0 
