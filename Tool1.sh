@@ -190,11 +190,11 @@ menu_clean_garbage() {
 menu_update_git() {
     clear
     echo -e "${YELLOW}=== [5] ระบบตรวจสอบและบังคับอัปเดตจาก GitHub ===${RESET}"
-    echo -e "${CYAN}กำลังทำการอัปเดตสคริปต์จากคลัง sarsukfreeing-alt/SAVED...${RESET}"
+    echo -e "${CYAN}กำลังทำการอัปเดตสคริปต์จากคลัง ...${RESET}"
     
     # 📂 ตั้งชื่อโฟลเดอร์ปลายทางชั่วคราวเพื่อโหลดไฟล์ใหม่
-    local repo_url="https://github.com/sarasukfreeing-alt/SAVED.git"
-    local tmp_dir="../SAVED_TMP"
+    local repo_url="https://github.com/sarasukfreeing-alt/SRSTools.git"
+    local tmp_dir="../SRSTools_TMP"
     
     # ดาวน์โหลดเวอร์ชันล่าสุดมาไว้ที่โฟลเดอร์ชั่วคราว
     if git clone --depth 1 "$repo_url" "$tmp_dir" &> /dev/null; then
