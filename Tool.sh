@@ -18,7 +18,7 @@ RESET="\033[0m"
 # 📂 การตั้งค่าพาธโฟลเดอร์ทำงานหลัก (Storage Paths)
 IMG_INPUT="/storage/emulated/0/Image/"
 IMG_WHITE_OUTPUT="/storage/emulated/0/White_Image/"
-H_OUTPUT="/storage/emulated/0/A-PNG 2 H -SRS/"
+H_OUTPUT="/storage/emulated/0/PNG2H/"
 FONT_INPUT="/storage/emulated/0/Fonts/"
 
 # ⚙️ ฟังก์ชันสำหรับสร้างโฟลเดอร์เริ่มต้นอัตโนมัติ
@@ -50,7 +50,7 @@ show_menu() {
     echo " / ___||  _ \/ ___| |_   _| ____|  / \  |  \/  |"
     echo " \___ \| |_) \___ \   | | |  _|   / _ \ | |\/| |"
     echo "  ___) |  _ < ___) |  | | | |___ / ___ \| |  | |"
-    echo " |____/|_| \_\____/   |_| |_____/_/   \_\_|  |_|${RESET}"
+    echo " |____/|_| \_\____/   |_| |_____/_/   \_\_|  |_| ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
     echo -e "${PURPLE}           SRS TEAM MODS - MULTI TOOL v2.0        ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
