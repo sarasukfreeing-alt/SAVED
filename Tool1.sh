@@ -50,7 +50,7 @@ show_menu() {
     echo "  ___) |  _ < ___) |  | | | |___ / ___ \| |  | |"
     echo " |____/|_| \_\____/   |_| |_____/_/   \_\_|  |_| ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
-    echo -e "${PURPLE}           SRS TEAM MODS - MULTI TOOL v2.2        ${RESET}"
+    echo -e "${PURPLE}           SRS TEAM MODS - MULTI TOOL v2.3        ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
     echo -e " ${YELLOW}[1]${RESET} ย้อมสีรูปภาพ PNG ให้เป็นสีขาวล้วน (Silhouette)"
     echo -e " ${YELLOW}[2]${RESET} แปลงรูปภาพ PNG เป็นไฟล์โค้ด (.h) ฐานสิบหก"
@@ -230,7 +230,6 @@ menu_setup_env() {
     read -p "กด Enter เพื่อกลับหน้าเมนูหลัก..."
 }
 
-# 7 
 search_offset_dump() {
     clear
     echo -e "${BLUE}==================================================${RESET}"
@@ -256,23 +255,22 @@ search_offset_dump() {
     echo -e "${YELLOW}\n⏳ กำลังค้นหาข้อมูลแบบยืดหยุ่น... อาจใช้เวลาสักครู่${RESET}"
     echo -e "${BLUE}--------------------------------------------------${RESET}"
 
-    # 🛠️ ปรับปรุงสคริปต์ค้นหา: ค้นหาได้ทั้งตัวเล็กตัวใหญ่ และรองรับทุก Format ของ Dump.cs
+    # 🛠️ แก้ไขโครงสร้างปีกกาปิด (} ) ของ awk ให้ถูกต้องตามหลักสากล
     awk -v search="$search_term" '
         BEGIN {
-            # เปิดโหมดค้นหาแบบไม่สนตัวพิมพ์เล็ก-ใหญ่ (สำหรับ GNU awk ใน Termux)
             IGNORECASE = 1; 
         }
-        # 1. จำค่า Namespace ล่าสุดที่เจอ
-        /namespace / { current_ns = $0; gsub(/^[ \t]+/, "", current_ns); }
-        
-        # 2. จำค่า Class/Struct ล่าสุดที่เจอ
-        /class / || /struct / { current_class = $0; gsub(/^[ \t]+/, "", current_class); }
-        
-        # 3. ตรวจสอบบรรทัดที่มีคีย์เวิร์ดค้นหา 
-        # และกรองให้มั่นใจว่าเป็นบรรทัดตัวแปร/ฟังก์ชันที่มีการระบุ Offset หรือ RVA
+        /namespace / { 
+            current_ns = $0; 
+            gsub(/^[ \t]+/, "", current_ns); 
+        }
+        /class / || /struct / { 
+            current_class = $0; 
+            gsub(/^[ \t]+/, "", current_class); 
+        }
         tolower($0) ~ tolower(search) && ($0 ~ /\/\/.*(RVA|Offset|FieldOffset|VA)/ || $0 ~ /0x[0-9a-fA-F]/) {
             clean_line = $0; 
-            gsub(/^[ \t]+/, "", clean_line); # ตัดช่องว่างด้านหน้าออกเพื่อความสวยงาม
+            gsub(/^[ \t]+/, "", clean_line);
             
             print "\033[1;36m[Namespace]:\033[0m " (current_ns ? current_ns : "Global / None");
             print "\033[1;33m[Class/Struct]:\033[0m " (current_class ? current_class : "Unknown Class");
@@ -281,11 +279,11 @@ search_offset_dump() {
             found = 1;
         }
         END {
-            if (!found) {
+            if (found != 1) {
                 print "\033[1;31m❌ ไม่พบข้อมูลที่ตรงกับคำว่า \"" search "\" ในไฟล์นี้\033[0m";
                 print "\033[1;33m💡 ทริค: ลองค้นหาด้วยชื่อ Class เต็มๆ หรือค้นหาคำย่อดูครับ\033[0m";
             }
-        fi
+        }
     ' "$dump_file"
 
     echo -e "${GREEN}🔍 ค้นหาเสร็จสิ้น!${RESET}"
