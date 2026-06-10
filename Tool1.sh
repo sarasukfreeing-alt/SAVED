@@ -50,7 +50,7 @@ show_menu() {
     echo "  ___) |  _ < ___) |  | | | |___ / ___ \| |  | |"
     echo " |____/|_| \_\____/   |_| |_____/_/   \_\_|  |_| ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
-    echo -e "${PURPLE}           SRS TEAM MODS - MULTI TOOL v2.3        ${RESET}"
+    echo -e "${PURPLE}         SRS TEAM MODS - MULTI TOOL v7.8.6        ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
     echo -e " ${YELLOW}[1]${RESET} ย้อมสีรูปภาพ PNG ให้เป็นสีขาวล้วน (Silhouette)"
     echo -e " ${YELLOW}[2]${RESET} แปลงรูปภาพ PNG เป็นไฟล์โค้ด (.h) ฐานสิบหก"
@@ -205,7 +205,7 @@ menu_update_git() {
         cp -r "$tmp_dir"/* . &> /dev/null
         rm -rf "$tmp_dir"
         
-        chmod +x tool.sh
+        chmod +x Tool1.sh
         echo -e "${GREEN}✅ บังคับอัปเดตระบบเป็นเวอร์ชันล่าสุดจาก GitHub สำเร็จ!${RESET}"
         echo -e "${YELLOW}💡 แนะนำ: กรุณาปิด Tool แล้วเปิดใหม่เพื่อใช้งานเวอร์ชันใหม่ครับ${RESET}"
     else
