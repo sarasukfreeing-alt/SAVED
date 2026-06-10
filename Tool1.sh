@@ -50,7 +50,7 @@ show_menu() {
     echo "  ___) |  _ < ___) |  | | | |___ / ___ \| |  | |"
     echo " |____/|_| \_\____/   |_| |_____/_/   \_\_|  |_| ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
-    echo -e "${PURPLE}         SRS TEAM MODS - MULTI TOOL v7.8.6        ${RESET}"
+    echo -e "${PURPLE}         SRS TEAM MODS - MULTI TOOL v7.8.7        ${RESET}"
     echo -e "${BLUE}==================================================${RESET}"
     echo -e " ${YELLOW}[1]${RESET} ย้อมสีรูปภาพ PNG ให้เป็นสีขาวล้วน (Silhouette)"
     echo -e " ${YELLOW}[2]${RESET} แปลงรูปภาพ PNG เป็นไฟล์โค้ด (.h) ฐานสิบหก"
